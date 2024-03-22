@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.TestimonialSection {
+    width: 50%;
+    height: 40vh;
+}
+
+.swiper-pagination-bullet-active{
+    background-color: red !important;
+}
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+     width: 100% !important;
+     height: 80% !important;
+    /* Center slide text vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: green;
+    color: white;
+  }
+  
+ 
