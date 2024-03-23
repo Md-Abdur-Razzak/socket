@@ -56,20 +56,20 @@ app.get("/registrationUser/:id",async(req,res)=>{
 const id = req.params.id
   const query = {_id:new ObjectId(id)}
   const sendDataToDatabase = await registrationUser.findOne(query)
-  console.log(sendDataToDatabase);
+
   res.send(sendDataToDatabase)
 })
 
 io.on('connection', socket => {
-  console.log("connect");
+ 
   socket.on('disconnect', () => {
-    console.log("disconnect");
+   
   });
 
   socket.on('sendMessage', async (messageInfo, receiverEmail) => {
 console.log({messageInfo,receiverEmail});
       //messageBuffer.push(messageInfo)
-      socket.broadcast.emit(receiverEmail, messageInfo);
+      await socket.broadcast.emit(receiverEmail, messageInfo);
       // await message.insertOne(messageInfo);
 
   });

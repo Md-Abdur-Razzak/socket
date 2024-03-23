@@ -2,8 +2,11 @@ import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/aut
 import React, { createContext, useEffect, useState } from 'react';
 import { Children } from 'react';
 import { auth } from '../firebase.config';
+
 export const AutContext = createContext(null)
 const Router = ({children}) => {
+  
+    
     const [user,setUser]=useState(null)
     const singIn = (email,password)=>{
         return createUserWithEmailAndPassword(auth,email,password)
@@ -11,6 +14,7 @@ const Router = ({children}) => {
     useEffect(()=>{
         const currentUser = onAuthStateChanged(auth,(users)=>{
             setUser(users)
+          
         })
         return ()=>{
             currentUser()
@@ -19,7 +23,8 @@ const Router = ({children}) => {
 
     const data = {
         singIn,
-        user
+        user,
+    
     }
     return (
        <AutContext.Provider value={data}>

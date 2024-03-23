@@ -1,35 +1,50 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
-import io from 'socket.io-client';
+import {io} from 'socket.io-client';
 import { AutContext } from '../Router';
-const socket = io('http://localhost:3002'); 
+
 const SpicifcUser = () => {
+  const socket =io('http://localhost:3002'); 
     const data = useLoaderData()
-   
+    const [ricivemessage,setMessage]=useState([])
+    const [meMessage,setMeMessage]=useState([])
+
     const {user}=useContext(AutContext)
    useEffect(()=>{
-        socket.on("connect",()=>{
+    socket.on("connect",()=>{
             console.log("connect");
         })
    },[])
 
 
-const handelSubmit = (e)=>{
+const handelSubmit =async (e)=>{
     e.preventDefault()
     const message = e.target.message.value
-    socket.emit("sendMessage",message,data?.email)
+    setMeMessage([...meMessage,message])
+   await socket.emit("sendMessage",message,data?.email)
     
 
 }
+useEffect(()=>{
+  
+socket.on(user?.email,(msg)=>{
+   setMessage([...ricivemessage,msg]);
 
-socket.on("neser@gmail.com",(msg)=>{
     console.log(msg);
   })
 
+},[user?.email,ricivemessage])
     return (
         <div >
-           <div className='h-[300px] border-4'>
-            hi
+           <div className='h-[300px] border-4 '>
+          {
+            ricivemessage?.map((item,ind)=><div className='bg-red-300' key={ind}>{item}</div>)
+          }
+         <div className='h-[300px] border-4'>
+         {
+            meMessage?.map((item,ind)=><div className='bg-green-300' key={ind}>{item}</div>)
+          }
+         </div>
            </div>
 
            <div>
