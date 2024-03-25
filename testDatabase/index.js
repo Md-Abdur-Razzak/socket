@@ -37,6 +37,7 @@ async function run() {
    
     await client.connect();
    const registrationUser = client.db("sockit").collection("userMessages")
+   const onToOnMessages = client.db("sockit").collection("onToOnMessages")
 
 app.post("/registrationUser",async(req,res)=>{
   const data = req.body
@@ -60,24 +61,63 @@ const id = req.params.id
   res.send(sendDataToDatabase)
 })
 
-io.on('connection', socket => {
+app.put("/updateQuntity",async(req,res)=>{
+const reciver = req?.body?.reciver
+const counter = req?.body?.counter
+if (reciver && counter) {
+  const findUser = {email : reciver }
+const option = {upsert:true}
+  const query = {
+    $set:{
+      count:counter
+    }
+  }
+  const result = await registrationUser.updateOne(findUser,query,option)
  
+  res.send(result)
+}
+
+})
+
+
+
+
+
+
+
+io.on('connection', socket => {
+
   socket.on('disconnect', () => {
    
   });
 
   socket.on('sendMessage', async (messageInfo, receiverEmail) => {
-console.log({messageInfo,receiverEmail});
+
       //messageBuffer.push(messageInfo)
+ 
       await socket.broadcast.emit(receiverEmail, messageInfo);
-      // await message.insertOne(messageInfo);
+     await onToOnMessages.insertOne(messageInfo);
 
   });
 });
 
 
 
+// --------------------user specifi message geting---------------
+app.get("/userGetMessages",async(req,res)=>{
+  const sendEmail = req.query.sender
+  const reciverEmail = req.query.reciver
+    const query = {
+      $or:[
+        {"sender":sendEmail,"reciver":reciverEmail},
+        {"reciver":sendEmail,"sender":reciverEmail}
+      ]
+    }
+    const sendDataToClient = await onToOnMessages.find(query).toArray()
 
+    res.send(sendDataToClient)
+  })
+  
 
 
  
